@@ -1,0 +1,13 @@
+from django import forms 
+from .models import Listing
+
+class Form(forms.Form):
+    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    category = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    description = forms.CharField(max_length=1000, widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    bid = forms.FloatField(min_value=0, max_value=5000, widget=forms.NumberInput(attrs={'class' : 'form-control'}))
+    image = forms.ImageField(widget=forms.FileInput(attrs={'class' : 'form-control', 'id' : 'formFile'}))
+
+
+class bid_form(forms.Form):
+    user_bid = forms.FloatField(label='',min_value=1, max_value=10000, widget=forms.NumberInput(attrs={"class" : "form-control", "placeholder" : "Bid"}))

@@ -1,0 +1,77 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <style>
+        #Image
+        {
+            max-width: 450px;
+            max-height: 450px;
+        }
+        .center
+        {
+            text-align: center;
+        }
+        .font
+        {
+            font-size: 25px;
+            font-family: sans-serif, Helvetica, Arial;
+        }
+        #price
+        {
+            font-weight: bold;
+            font-size: 30px;
+        }
+        #context
+        {
+            color: red;
+            font-size: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #button
+        {
+            background-color: rgba(128, 128, 128, 0.678);
+            border-color: rgba(128, 128, 128, 0.678);
+            border-radius: 3px;
+            height: 27px;
+            width: 100px;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        
+        }
+        #button:hover 
+        {  
+            background-color: rgba(128, 128, 128, 0.906);
+        }
+    </style>
+    <h1 class="center">Listing: {{ auction.name }}</h1>
+    <form action="{% url 'watchlist' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" value="{{ auction.id }}" id="button" name="watchlist">Watchlist</button>
+    </form>
+    <div class="center font">{{ auction.description }}</div>
+    <div class="center" id="price">Price: {{ auction.price }}$</div>
+    <div><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></div>
+    <div class="font" style="font-weight: bold;">Category: {{ auction.category }}</div>  
+    {% if user.is_authenticated %}
+        <p class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid.{% else %} No bids so far.Your bid is the current bid.{% endif %}</p>
+        <form action="/listing/{{ auction.id }}/" method="post">
+            {% csrf_token %}
+            {% if context2 %}
+                <div id="context">{{ context2 }}</div>
+            {% elif context1 %}
+                <div id="context" style="color:green;">{{ context1 }}</div>
+            {% endif %}
+            {{ form.as_p }}
+            <div><input type="submit" value="Place Bid" class="btn btn-primary"></div>
+        </form>
+    {% else %}
+    Sign in To place Bids!
+    {% endif %}
+    {% if user.is_authenticated %}
+  
+    
+    {% endif %}
+
+{% endblock %}
+

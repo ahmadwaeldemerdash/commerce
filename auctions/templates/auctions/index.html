@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <style>
+        #image
+        {
+            max-width: 250px;
+            max-height: 250px;
+        }
+        
+    </style>
+    <h2>Active Listings</h2>
+    {% if auctions %}
+        {% for auction in auctions %}
+        <div><strong>{{ auction.name }}</strong></div>
+        </div><strong>Price:{{ auction.price }}$</strong></div>
+        <p><a href="{% url 'listing' auction.id %}"><img src="{{ auction.image.url }}" alt="Auction Image" id="image"></a></p>
+        <div>Created {{ auction.time }}</div>
+        {% endfor %}
+
+    {% else %}
+        Empty
+
+    {% endif %}
+
+{% endblock %}
