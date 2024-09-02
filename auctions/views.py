@@ -159,6 +159,5 @@ def watchlist(request):
             auctions.append(listing)
 
     return render(request, "auctions/watchlist.html",{
-        "auctions" : auctions,
-        "token" : 1
+        "auctions" : auctions
     })
