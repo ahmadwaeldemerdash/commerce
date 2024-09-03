@@ -44,10 +44,21 @@
             background-color: rgba(128, 128, 128, 0.906);
         }
     </style>
+    
     <h1 class="center">Listing: {{ auction.name }}</h1>
-    <form action="{% url 'watchlist' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" value="{{ auction.id }}" id="button" name="watchlist">Watchlist</button>
+    {% if user.is_authenticated %}
+        {% if token == 0 %}
+            <form action="{% url 'watchlist' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" value="{{ auction.id }}" id="button" name="watchlist">Watchlist</button>
+            </form>
+        {% elif token == 1 %}
+            <form action="{% url 'remove' %}" method="post">
+                {% csrf_token %}
+            <button type="submit" value="{{ auction.id }}" id="button" name="remove">Remove</button>
+        {% endif %}
+    {% endif %}
+       
     </form>
     <div class="center font">{{ auction.description }}</div>
     <div class="center" id="price">Price: {{ auction.price }}$</div>

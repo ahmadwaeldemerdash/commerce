@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 
 from .form import Form, bid_form
 
@@ -129,20 +130,22 @@ def auction_listing(request, listing_id):
                         "auction" : auction,
                         "bids" : bids,
                         "context2" : "Enter a Valid Bid!"
-
                         })
     form.fields['user_bid'].widget.attrs.update({'min': db_bid})
-   
+    token = 1 
+    listing = Listing.objects.get(pk=listing_id)
+    if len(listing.watchlist.all()) == 0:
+        token = 0
     return render(request, "auctions/listing.html", {
         "auction" : auction,
         "form" : form,
         "bids" : bids,
+        "token" : token
     })
 def watchlist(request):
     if request.method == "POST":
         listing_id = request.POST.get("watchlist")
         l = Listing.objects.get(pk=listing_id)
-        
         watchlist = Watchlist(listing=l)
         watchlist.save()
         url = reverse("watchlist")
@@ -161,3 +164,13 @@ def watchlist(request):
     return render(request, "auctions/watchlist.html",{
         "auctions" : auctions
     })
+
+
+def remove(request):
+    if request.method == "POST":
+        listing = request.POST.get("remove")
+        listing = Listing.objects.get(pk=listing)
+        listing = listing.watchlist.all()
+        listing.delete()
+        url = reverse("watchlist")
+        return HttpResponseRedirect(url)
