@@ -83,7 +83,7 @@
             <p><input type="submit" value="Place Bid" class="btn btn-primary"></p>
         </form>
     {% else %}
-    Sign in To place Bids!
+    <b>Sign in To place Bids!</b>
     {% endif %}
 
     <div class="card">
@@ -97,7 +97,13 @@
                 </ul>
             {% endfor %}
           </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          {% if user.is_authenticated %}
+            <form action="{% url 'comment' auction.id %}" method="post">
+                {% csrf_token %}
+                <p><input type="text" class="form-control" placeholder="Comment..." name="comment"></p>
+                <input type="hidden" name="name" value="{{ request.user }}">
+                <button type="submit" class="btn btn-primary">Comment</button>
+          {% endif %}
         </div>
       </div>
 

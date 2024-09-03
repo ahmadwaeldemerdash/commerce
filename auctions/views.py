@@ -177,3 +177,15 @@ def remove(request):
         listing.delete()
         url = reverse("watchlist")
         return HttpResponseRedirect(url)
+    
+def add_comment(request, listing_id):
+    if request.method == "POST":
+        comment = request.POST.get("comment")
+        user = request.POST.get("name")
+        user = User.objects.get(username=user)
+        listing = Listing.objects.get(pk=listing_id)
+        add = Comment(user=user, listing=listing, text=comment)
+        add.save()
+        url = reverse("listing" ,args=[listing_id])
+        return HttpResponseRedirect(url)
+        
