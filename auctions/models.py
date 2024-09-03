@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 class User(AbstractUser):
     pass
 
 
 class Listing(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="listing")
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=1000)
     price = models.FloatField()
@@ -16,6 +16,7 @@ class Listing(models.Model):
 
 
 class Bid(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="bids")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids", default=0)
     price = models.FloatField()
 
@@ -24,6 +25,7 @@ class Bid(models.Model):
 
 
 class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="comments")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments", null=True)
     text = models.CharField(max_length=500)
 

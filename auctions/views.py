@@ -110,7 +110,6 @@ def auction_listing(request, listing_id):
     if request.method == "POST":
         form = bid_form(request.POST)
         user_bid = float(request.POST.get("user_bid"))
-
         if (form.is_valid() and db_bid < user_bid and price == 0) or (form.is_valid() and db_bid <= user_bid and price != 0):
             b = form.cleaned_data["user_bid"]
             db_save = Bid(price=b, listing_id=listing_id)
@@ -134,13 +133,17 @@ def auction_listing(request, listing_id):
     form.fields['user_bid'].widget.attrs.update({'min': db_bid})
     token = 1 
     listing = Listing.objects.get(pk=listing_id)
+    comments = Comment.objects.all().filter(listing=listing)
+    
     if len(listing.watchlist.all()) == 0:
         token = 0
+    
     return render(request, "auctions/listing.html", {
         "auction" : auction,
         "form" : form,
         "bids" : bids,
-        "token" : token
+        "token" : token,
+        "comments" : comments
     })
 def watchlist(request):
     if request.method == "POST":

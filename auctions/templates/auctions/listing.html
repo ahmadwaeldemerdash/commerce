@@ -43,6 +43,12 @@
         {  
             background-color: rgba(128, 128, 128, 0.906);
         }
+        #name
+        {
+            font-weight: bold;
+        }
+       
+        
     </style>
     
     <h1 class="center">Listing: {{ auction.name }}</h1>
@@ -65,7 +71,7 @@
     <div><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></div>
     <div class="font" style="font-weight: bold;">Category: {{ auction.category }}</div>  
     {% if user.is_authenticated %}
-        <p class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid.{% else %} No bids so far.Your bid is the current bid.{% endif %}</p>
+        <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid.{% else %} No bids so far.Your bid is the current bid.{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
             {% csrf_token %}
             {% if context2 %}
@@ -74,15 +80,26 @@
                 <div id="context" style="color:green;">{{ context1 }}</div>
             {% endif %}
             {{ form.as_p }}
-            <div><input type="submit" value="Place Bid" class="btn btn-primary"></div>
+            <p><input type="submit" value="Place Bid" class="btn btn-primary"></p>
         </form>
     {% else %}
     Sign in To place Bids!
     {% endif %}
-    {% if user.is_authenticated %}
-  
-    
-    {% endif %}
+
+    <div class="card">
+        <h5 class="card-header">Comments</h5>
+        <div class="card-body">
+          
+          <p class="card-text"> 
+            {% for comment in comments %}
+                <ul>
+                    <li><div class="font" style="font-size: 20px;">{{ comment.text }} - Comment by <label id="name">{{ comment.user.username }}</label></div></li>
+                </ul>
+            {% endfor %}
+          </p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
 
 {% endblock %}
 
