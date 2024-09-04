@@ -109,8 +109,13 @@ def auction_listing(request, listing_id):
     if db_bid == 1:
         price = Listing.objects.values("price").filter(id=listing_id)
         db_bid = float(price[0]["price"])
-
-
+    form.fields['user_bid'].widget.attrs.update({'min': db_bid})
+    token = 1 
+    listing = Listing.objects.get(pk=listing_id)
+    comments = Comment.objects.all().filter(listing=listing)
+    category = listing.category
+    if len(listing.watchlist.all()) == 0:
+        token = 0
     if request.method == "POST":
         form = bid_form(request.POST)
         user_bid = float(request.POST.get("user_bid"))
@@ -121,27 +126,26 @@ def auction_listing(request, listing_id):
             bids = auction.bids.count()
             form.fields['user_bid'].widget.attrs.update({'min': db_bid})
             return render(request, "auctions/listing.html",{
-                        "form" : form,
-                        "auction" : auction,
-                        "bids" : bids,
-                        "context1" : "Bid Added Successfully!"
-                        })
+                "form" : form,
+                "auction" : auction,
+                "bids" : bids,
+                "context1" : "Bid Added Successfully!", 
+                "token" : token,
+                "comments" : comments,
+                "category" : category
+            })
         else:
             form.fields['user_bid'].widget.attrs.update({'min': db_bid})
             return render(request, "auctions/listing.html",{
-                        "form" : form,
-                        "auction" : auction,
-                        "bids" : bids,
-                        "context2" : "Enter a Valid Bid!"
-                        })
-    form.fields['user_bid'].widget.attrs.update({'min': db_bid})
-    token = 1 
-    listing = Listing.objects.get(pk=listing_id)
-    comments = Comment.objects.all().filter(listing=listing)
-    category = listing.category
-    
-    if len(listing.watchlist.all()) == 0:
-        token = 0
+            "form" : form,
+            "auction" : auction,
+            "bids" : bids,
+            "context2" : "Enter a Valid Bid!",
+            "token" : token,
+            "comments" : comments,
+            "category" : category
+            })
+  
     
     return render(request, "auctions/listing.html", {
         "auction" : auction,
