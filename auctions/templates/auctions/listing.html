@@ -84,7 +84,7 @@
         <h1>Details</h1>
             <ul>
                 <li style="font-size: 20px;">Listed by: <b>{{ auction.user }} </b></li>
-                <li style="font-size: 20px;">Category: <b>{% if auction.category %} {{ auction.category }} {% else %} No Category Listed {% endif %} </b></li>
+                <li style="font-size: 20px;">Category: <b>{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
             </ul>
     {% else %}
     <b>Sign in To place Bids!</b>

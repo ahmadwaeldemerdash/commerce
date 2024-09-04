@@ -1,14 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import Sum
-from django.shortcuts import get_object_or_404
+
+
 
 from .form import Form, bid_form
 
-from .models import User, Listing, Bid, Comment, Watchlist
+from .models import User, Listing, Bid, Comment, Watchlist, Category
 
 
 def index(request):
@@ -138,6 +138,7 @@ def auction_listing(request, listing_id):
     token = 1 
     listing = Listing.objects.get(pk=listing_id)
     comments = Comment.objects.all().filter(listing=listing)
+    category = listing.category
     
     if len(listing.watchlist.all()) == 0:
         token = 0
@@ -147,7 +148,8 @@ def auction_listing(request, listing_id):
         "form" : form,
         "bids" : bids,
         "token" : token,
-        "comments" : comments
+        "comments" : comments,
+        "category" : category
     })
 def watchlist(request):
     if request.method == "POST":
@@ -194,8 +196,15 @@ def add_comment(request, listing_id):
         return HttpResponseRedirect(url)
 
 def categories(request):
-    listings = Listing.objects.all()
+    categories = Category.objects.all()
 
     return render(request, "auctions/category.html", {
+        "categories" : categories
+    })
+
+def listing_category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    listings = Listing.objects.all().filter(category=category)
+    return render(request, "auctions/listing_category.html", {
         "listings" : listings
     })
