@@ -77,7 +77,7 @@
     {% endif %}
     {% if user.username|lower == auction.user|lower %}
 
-    {% elif user.is_authenticated and user.username|lower != auction.user|lower %}
+    {% elif not winner and user.is_authenticated and user.username|lower != auction.user|lower %}
         <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid!{% else %} No bids so far.Your bid is the current bid!{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
             {% csrf_token %}
