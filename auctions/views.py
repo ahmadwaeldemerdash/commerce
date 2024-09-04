@@ -3,12 +3,12 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
+from django.db.models import Max
 
 
 from .form import Form, bid_form
 
-from .models import User, Listing, Bid, Comment, Watchlist, Category
+from .models import User, Listing, Bid, Comment, Watchlist, Category, Winner
 
 
 def index(request):
@@ -77,7 +77,10 @@ def create(request):
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
-            category = Category.objects.get(pk=category)
+            try:
+                category = Category.objects.get(pk=category)
+            except:
+                category = None
             bid = form.cleaned_data["bid"]
             img = form.cleaned_data["image"]
             user_listing = Listing(user=User.objects.get(username=user), name=title, description=description,price=bid, category=category, image=img)
@@ -95,9 +98,14 @@ def create(request):
        "Form" : form
     })
 
-def auction_listing(request, listing_id):  
+def auction_listing(request, listing_id): 
     price = 0
     auction = Listing.objects.get(pk=listing_id)
+    try:
+
+        winner = Winner.objects.get(listing=auction)
+    except:
+        winner = None
     bids = auction.bids.count()
     db_bids = auction.bids.values()
     db_bid = 0
@@ -133,7 +141,8 @@ def auction_listing(request, listing_id):
                 "context1" : "Bid Added Successfully!", 
                 "token" : token,
                 "comments" : comments,
-                "category" : category
+                "category" : category,
+                "winner" : winner
             })
         else:
             form.fields['user_bid'].widget.attrs.update({'min': db_bid})
@@ -144,7 +153,8 @@ def auction_listing(request, listing_id):
             "context2" : "Enter a Valid Bid!",
             "token" : token,
             "comments" : comments,
-            "category" : category
+            "category" : category,
+            "winner" : winner
             })
   
     
@@ -154,7 +164,8 @@ def auction_listing(request, listing_id):
         "bids" : bids,
         "token" : token,
         "comments" : comments,
-        "category" : category
+        "category" : category, 
+        "winner" : winner
     })
 def watchlist(request):
     if request.method == "POST":
@@ -210,14 +221,25 @@ def categories(request):
 def listing_category(request, category_id):
     category = Category.objects.get(pk=category_id)
     listings = Listing.objects.all().filter(category=category)
-    return render(request, "auctions/listing_category.html", {
-        "listings" : listings
+    return render(request, "auctions/index.html", {
+        "auctions" : listings
     })
 
 def close(request, listing_id):
     if request.method == "POST":
-        print("here")
         listing = Listing.objects.get(pk=listing_id)
-        listing.delete()
-        url = reverse("index")
+        bids = listing.bids.all()
+        sum = 0
+        for bid in bids:
+            if bid.price > sum :
+                sum = bid.price
+        try:
+            b = Bid.objects.get(price=sum)
+        except:
+           url = reverse("listing", args=[listing_id])
+           return HttpResponseRedirect(url)
+        user = b.user
+        winner = Winner(user=user, listing=listing)
+        winner.save()
+        url = reverse("listing", args=[listing_id])
         return HttpResponseRedirect(url)

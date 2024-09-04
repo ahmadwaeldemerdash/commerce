@@ -48,9 +48,11 @@
             font-weight: bold;
         }
        
-        
     </style>
+    {% if user.is_authenticated and user.username == winner.user %}
+            <h1 style="color: green">You have won the auction!</h1>
     
+    {% endif %}
     <h1 class="center">Listing: {{ auction.name }}</h1>
     {% if user.is_authenticated %}
         {% if token == 0 %}
@@ -68,8 +70,14 @@
     </form>
     <div class="center font">{{ auction.description }}</div>
     <div class="center" id="price">Price: {{ auction.price }}$</div>
-    <div><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></div> 
-    {% if user.is_authenticated %}
+    {% if auction.image %}
+        <p><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></p> 
+    {% else %}
+        No Image Listed !
+    {% endif %}
+    {% if user.username|lower == auction.user|lower %}
+
+    {% elif user.is_authenticated and user.username|lower != auction.user|lower %}
         <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid!{% else %} No bids so far.Your bid is the current bid!{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
             {% csrf_token %}
@@ -82,12 +90,9 @@
             <input type="hidden" value="{{ user.username }}" name="user">
             <p><input type="submit" value="Place Bid" class="btn btn-primary"></p>
         </form>
-        <h1>Details</h1>
-            <ul>
-                <li style="font-size: 20px;">Listed by: <b>{{ auction.user }} </b></li>
-                <li style="font-size: 20px;">Category: <b>{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
-            </ul>
-    {% else %}
+    
+    
+    {% elif not user.is_authenticated %}
     <b>Sign in To place Bids!</b>
     {% endif %}
 
@@ -112,11 +117,16 @@
           {% endif %}
         </div>
       </div>
+      <h1>Details</h1>
+        <ul>
+            <li style="font-size: 20px;">Listed by: <b>{{ auction.user }} </b></li>
+            <li style="font-size: 20px;">Category: <b>{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
+        </ul>
       {% if user.is_authenticated and user == auction.user %}
       <form action="{% url 'close' auction.id %}" method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">Close</button>
       </form>
       {% endif %}
+    
 {% endblock %}
-

@@ -9,10 +9,10 @@ for i in c :
 class Form(forms.Form):
     
     title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class' : 'form-control'}))
-    category = forms.ChoiceField(choices=categories, widget=forms.Select(attrs={'class' : 'form-control'}))
+    category = forms.ChoiceField(choices=categories, widget=forms.Select(attrs={'class' : 'form-control'}), required=False)
     description = forms.CharField(max_length=1000, widget=forms.TextInput(attrs={'class' : 'form-control'}))
     bid = forms.FloatField(min_value=0, max_value=5000, widget=forms.NumberInput(attrs={'class' : 'form-control'}))
-    image = forms.ImageField(widget=forms.FileInput(attrs={'class' : 'form-control'}))
+    image = forms.ImageField(widget=forms.FileInput(attrs={'class' : 'form-control'}), required=False)
 
 
 class bid_form(forms.Form):

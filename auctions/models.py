@@ -4,6 +4,7 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+
 class Category(models.Model):
     Category = models.CharField(blank=True, null=True,max_length=100)
 
@@ -33,3 +34,8 @@ class Comment(models.Model):
 
 class Watchlist(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchlist")
+
+
+class Winner(models.Model):
+    user = models.CharField(max_length=64)
+    listing = models.ForeignKey(Listing, related_name="winner", on_delete=models.CASCADE, null=True)

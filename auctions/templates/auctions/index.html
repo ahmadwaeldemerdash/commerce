@@ -14,7 +14,11 @@
         {% for auction in auctions %}
         <div><strong>{{ auction.name }}</strong></div>
         </div><strong>Price:{{ auction.price }}$</strong></div>
+        {% if auction.image %}
         <p><a href="{% url 'listing' auction.id %}"><img src="{{ auction.image.url }}" alt="Auction Image" id="image"></a></p>
+        {% else %}
+            <p><a href="{% url 'listing' auction.id %}">No Image Listed !</a></p>
+        {% endif %}
         <div>Created {{ auction.time }}</div>
         {% endfor %}
 
