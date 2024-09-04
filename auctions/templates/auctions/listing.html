@@ -70,7 +70,7 @@
     <div class="center" id="price">Price: {{ auction.price }}$</div>
     <div><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></div> 
     {% if user.is_authenticated %}
-        <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid.{% else %} No bids so far.Your bid is the current bid.{% endif %}</div>
+        <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid!{% else %} No bids so far.Your bid is the current bid!{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
             {% csrf_token %}
             {% if context2 %}
@@ -79,6 +79,7 @@
                 <div id="context" style="color:green;">{{ context1 }}</div>
             {% endif %}
             {{ form.as_p }}
+            <input type="hidden" value="{{ user.username }}" name="user">
             <p><input type="submit" value="Place Bid" class="btn btn-primary"></p>
         </form>
         <h1>Details</h1>
@@ -107,9 +108,15 @@
                 <p><input type="text" class="form-control" placeholder="Comment..." name="comment"></p>
                 <input type="hidden" name="name" value="{{ request.user }}">
                 <button type="submit" class="btn btn-primary">Comment</button>
+            </form>
           {% endif %}
         </div>
       </div>
-
+      {% if user.is_authenticated and user == auction.user %}
+      <form action="{% url 'close' auction.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Close</button>
+      </form>
+      {% endif %}
 {% endblock %}
 

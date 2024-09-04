@@ -73,11 +73,11 @@ def create(request):
     if request.method == "POST":
         form = Form(request.POST, request.FILES)
         user = request.POST.get("user")
-    
         if form.is_valid():
             title = form.cleaned_data["title"]
-            category = form.cleaned_data["category"]
             description = form.cleaned_data["description"]
+            category = form.cleaned_data["category"]
+            category = Category.objects.get(pk=category)
             bid = form.cleaned_data["bid"]
             img = form.cleaned_data["image"]
             user_listing = Listing(user=User.objects.get(username=user), name=title, description=description,price=bid, category=category, image=img)
@@ -89,10 +89,10 @@ def create(request):
                 "Form" : form
             } )
 
-
     form = Form()
+
     return render(request, "auctions/create.html", {
-       "Form" : form 
+       "Form" : form
     })
 
 def auction_listing(request, listing_id):  
@@ -119,9 +119,10 @@ def auction_listing(request, listing_id):
     if request.method == "POST":
         form = bid_form(request.POST)
         user_bid = float(request.POST.get("user_bid"))
+        user = User.objects.get(username=request.POST.get("user"))
         if (form.is_valid() and db_bid < user_bid and price == 0) or (form.is_valid() and db_bid <= user_bid and price != 0):
             b = form.cleaned_data["user_bid"]
-            db_save = Bid(price=b, listing_id=listing_id)
+            db_save = Bid(user=user, price=b, listing_id=listing_id)
             db_save.save()
             bids = auction.bids.count()
             form.fields['user_bid'].widget.attrs.update({'min': db_bid})
@@ -212,3 +213,11 @@ def listing_category(request, category_id):
     return render(request, "auctions/listing_category.html", {
         "listings" : listings
     })
+
+def close(request, listing_id):
+    if request.method == "POST":
+        print("here")
+        listing = Listing.objects.get(pk=listing_id)
+        listing.delete()
+        url = reverse("index")
+        return HttpResponseRedirect(url)

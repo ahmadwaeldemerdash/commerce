@@ -6,7 +6,7 @@
             <input type="hidden" value="{{ user }}" name="user">
             {% csrf_token %}
             {{ Form.as_p }}
-            
-            <input type="submit" class="btn btn-primary" value="Save">
-        </div>
+            <p>
+                <input type="submit" class="btn btn-primary" value="Save">
+            </p>
 {% endblock %}
