@@ -2,6 +2,7 @@ from django import forms
 from .models import Listing
 
 class Form(forms.Form):
+    
     title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class' : 'form-control'}))
     category = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class' : 'form-control'}))
     description = forms.CharField(max_length=1000, widget=forms.TextInput(attrs={'class' : 'form-control'}))

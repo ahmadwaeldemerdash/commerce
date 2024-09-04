@@ -68,8 +68,7 @@
     </form>
     <div class="center font">{{ auction.description }}</div>
     <div class="center" id="price">Price: {{ auction.price }}$</div>
-    <div><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></div>
-    <div class="font" style="font-weight: bold;">Category: {{ auction.category }}</div>  
+    <div><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></div> 
     {% if user.is_authenticated %}
         <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid.{% else %} No bids so far.Your bid is the current bid.{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
@@ -82,6 +81,11 @@
             {{ form.as_p }}
             <p><input type="submit" value="Place Bid" class="btn btn-primary"></p>
         </form>
+        <h1>Details</h1>
+            <ul>
+                <li style="font-size: 20px;">Listed by: <b>{{ auction.user }} </b></li>
+                <li style="font-size: 20px;">Category: <b>{% if auction.category %} {{ auction.category }} {% else %} No Category Listed {% endif %} </b></li>
+            </ul>
     {% else %}
     <b>Sign in To place Bids!</b>
     {% endif %}

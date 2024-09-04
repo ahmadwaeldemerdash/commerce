@@ -72,14 +72,18 @@ def register(request):
 def create(request):
     if request.method == "POST":
         form = Form(request.POST, request.FILES)
+        user = request.POST.get("user")
+    
         if form.is_valid():
             title = form.cleaned_data["title"]
             category = form.cleaned_data["category"]
             description = form.cleaned_data["description"]
             bid = form.cleaned_data["bid"]
             img = form.cleaned_data["image"]
-            user_listing = Listing(name=title, description=description,price=bid, category=category, image=img)
+            user_listing = Listing(user=User.objects.get(username=user), name=title, description=description,price=bid, category=category, image=img)
             user_listing.save()
+            url = reverse("index")
+            return HttpResponseRedirect(url)
         else:
             return render(request, "templates/auctions/create.html",{
                 "Form" : form
@@ -188,4 +192,10 @@ def add_comment(request, listing_id):
         add.save()
         url = reverse("listing" ,args=[listing_id])
         return HttpResponseRedirect(url)
-        
+
+def categories(request):
+    listings = Listing.objects.all()
+
+    return render(request, "auctions/category.html", {
+        "listings" : listings
+    })
