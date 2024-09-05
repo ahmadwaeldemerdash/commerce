@@ -1,98 +1,54 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <style>
-        #Image
-        {
-            max-width: 450px;
-            max-height: 450px;
-        }
-        .center
-        {
-            text-align: center;
-        }
-        .font
-        {
-            font-size: 25px;
-            font-family: sans-serif, Helvetica, Arial;
-        }
-        #price
-        {
-            font-weight: bold;
-            font-size: 30px;
-        }
-        #context
-        {
-            color: red;
-            font-size: 30px;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        #button
-        {
-            background-color: rgba(128, 128, 128, 0.678);
-            border-color: rgba(128, 128, 128, 0.678);
-            border-radius: 3px;
-            height: 27px;
-            width: 100px;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: bold;
-        
-        }
-        #button:hover 
-        {  
-            background-color: rgba(128, 128, 128, 0.906);
-        }
-        #name
-        {
-            font-weight: bold;
-        }
-       
-    </style>
-   
+    
     {% if user.is_authenticated and user.username == winner.user %}
-            <h1 style="color: green">You have won the auction!</h1>
+            <h1 style="color:rgb(5, 184, 255);">You have won the auction!</h1>
     {% elif winner and user.is_authenticated and user.username|lower != winner.user|lower %}
-        <h1 style="color: green">Auction Closed !</h1>
+        <h1 style="color: rgb(5, 184, 255);">Auction Closed !</h1>
 
     
     {% endif %}
-    <h1 class="center">Listing: {{ auction.name }}</h1>
+    <h1><b>Listing:</b> <span class="heading">{{ auction.name }}</span></h1>
     {% if user.is_authenticated %}
         {% if token == 0 %}
             <form action="{% url 'watchlist' %}" method="post">
                 {% csrf_token %}
-                <button type="submit" value="{{ auction.id }}" id="button" name="watchlist">Watchlist</button>
+                <p><button type="submit" value="{{ auction.id }}" class="btn btn-primary buttons" name="watchlist">Watchlist</button></p>
             </form>
         {% elif token == 1 %}
             <form action="{% url 'remove' %}" method="post">
                 {% csrf_token %}
-            <button type="submit" value="{{ auction.id }}" id="button" name="remove">Remove</button>
+            <p><button type="submit" value="{{ auction.id }}" class="btn btn-primary buttons" name="remove">Remove</button></p>
         {% endif %}
     {% endif %}
-       
     </form>
-    <div class="center font">{{ auction.description }}</div>
-    <div class="center" id="price">Price: {{ auction.price }}$</div>
+    <div class="details">
+        <b> 
+        <p style="font-size: 25px;"><span class="heading">Description: </span >{{ auction.description }}</p>
+        <p style="font-size: 30px; text-align: center;"> <span class="heading span">Price: ${{ auction.price }}</span></p>
+        </b>
+    </div>
     {% if auction.image %}
-        <p><img src="{{ auction.image.url }}" alt="auction.name" id="Image"></p> 
+        <p><img src="{{ auction.image.url }}" alt="auction.name"></p> 
     {% else %}
         No Image Listed !
     {% endif %}
+  
     {% if user.username|lower == auction.user|lower %}
 
     {% elif not winner and user.is_authenticated and user.username|lower != auction.user|lower %}
-        <div class="font">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current bid!{% else %} No bids so far.Your bid is the current bid!{% endif %}</div>
+        <div  style="font-size: 30px; font-weight: bold;">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current <span class="heading">bid!</span>{% else %} No bids so far.Your bid is the current <span class="heading">bid!</span>{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
             {% csrf_token %}
             {% if context2 %}
                 <div id="context">{{ context2 }}</div>
             {% elif context1 %}
-                <div id="context" style="color:green;">{{ context1 }}</div>
+                <div id="context" style="color:rgb(5, 184, 255);">{{ context1 }}</div>
             {% endif %}
             {{ form.as_p }}
             <input type="hidden" value="{{ user.username }}" name="user">
-            <p><input type="submit" value="Place Bid" class="btn btn-primary"></p>
+            <p><input type="submit" value="Place Bid" class="btn btn-primary buttons"></p>
         </form>
     
     
@@ -100,14 +56,14 @@
     <b>Sign in To place Bids!</b>
     {% endif %}
 
-    <div class="card">
-        <h5 class="card-header">Comments</h5>
-        <div class="card-body">
+    <div class="card comment">
+        <h5 class="card-header comment-header">Comments</h5>
+        <div class="card-body comment-body">
           
-          <p class="card-text"> 
+          <p class="card-text comment-text"> 
             {% for comment in comments %}
                 <ul>
-                    <li><div class="font" style="font-size: 20px;">{{ comment.text }} - Comment by <label id="name">{{ comment.user.username }}</label></div></li>
+                    <li><div style="font-size: 20px;">{{ comment.text }} - Comment by <label class="heading">{{ comment.user.username }}</label></div></li>
                 </ul>
             {% endfor %}
           </p>
@@ -116,20 +72,20 @@
                 {% csrf_token %}
                 <p><input type="text" class="form-control" placeholder="Comment..." name="comment"></p>
                 <input type="hidden" name="name" value="{{ request.user }}">
-                <button type="submit" class="btn btn-primary">Comment</button>
+                <button type="submit" class="btn btn-primary buttons">Comment</button>
             </form>
           {% endif %}
         </div>
       </div>
       <h1>Details</h1>
         <ul>
-            <li style="font-size: 20px;">Listed by: <b>{{ auction.user }} </b></li>
-            <li style="font-size: 20px;">Category: <b>{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
+            <li style="font-size: 20px;">Listed by: <b class="heading">{{ auction.user }} </b></li>
+            <li style="font-size: 20px;">Category: <b class="heading">{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
         </ul>
       {% if user.is_authenticated and user == auction.user %}
       <form action="{% url 'close' auction.id %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Close</button>
+        <button type="submit" class="btn btn-primary buttons">Close</button>
       </form>
       {% endif %}
     

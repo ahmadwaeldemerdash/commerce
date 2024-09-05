@@ -11,7 +11,7 @@ class Category(models.Model):
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="listing")
     name = models.CharField(max_length=64)
-    description = models.CharField(max_length=1000)
+    description = models.CharField(max_length=5000)
     price = models.FloatField()
     image = models.ImageField(blank=True, null=True, upload_to='images/')
     time = models.DateTimeField(auto_now_add=True)
