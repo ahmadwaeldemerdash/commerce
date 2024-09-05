@@ -49,8 +49,12 @@
         }
        
     </style>
+   
     {% if user.is_authenticated and user.username == winner.user %}
             <h1 style="color: green">You have won the auction!</h1>
+    {% elif winner and user.is_authenticated and user.username|lower != winner.user|lower %}
+        <h1 style="color: green">Auction Closed !</h1>
+
     
     {% endif %}
     <h1 class="center">Listing: {{ auction.name }}</h1>
