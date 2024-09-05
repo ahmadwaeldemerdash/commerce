@@ -3,9 +3,9 @@
 {% block body %}
     
     {% if user.is_authenticated and user.username == winner.user %}
-            <h1 style="color:rgb(5, 184, 255);">You have won the auction!</h1>
+        <h1 class="heading">You have won the auction!</h1>
     {% elif winner and user.is_authenticated and user.username|lower != winner.user|lower %}
-        <h1 style="color: rgb(5, 184, 255);">Auction Closed !</h1>
+        <h1 class="heading">Auction Closed !</h1>
 
     
     {% endif %}
@@ -23,28 +23,29 @@
         {% endif %}
     {% endif %}
     </form>
-    <div class="details">
-        <b> 
-        <p style="font-size: 25px;"><span class="heading">Description: </span >{{ auction.description }}</p>
-        <p style="font-size: 30px; text-align: center;"> <span class="heading span">Price: ${{ auction.price }}</span></p>
-        </b>
-    </div>
+    
     {% if auction.image %}
         <p><img src="{{ auction.image.url }}" alt="auction.name"></p> 
     {% else %}
         No Image Listed !
     {% endif %}
+    <div>
+        <b> 
+        <p><span class="heading" style="font-size: 30px">Description: </span><label style="font-size: 23px;">{{ auction.description }}</p>
+        <p> <span class="heading span" style="font-size: 30px;">Price: </span><lable style="font-size: 23px;"> ${{ auction.price }}</p>
+        </b>
+    </div>
   
     {% if user.username|lower == auction.user|lower %}
 
     {% elif not winner and user.is_authenticated and user.username|lower != auction.user|lower %}
-        <div  style="font-size: 30px; font-weight: bold;">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current <span class="heading">bid!</span>{% else %} No bids so far.Your bid is the current <span class="heading">bid!</span>{% endif %}</div>
+        <div style="font-size: 30px; font-weight: bold;">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current <span class="heading">bid!</span>{% else %} No bids so far.Your bid is the current <span class="heading" style="font-size: 30px;">bid!</span>{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
             {% csrf_token %}
             {% if context2 %}
-                <div id="context">{{ context2 }}</div>
+                <div class="heading">{{ context2 }}</div>
             {% elif context1 %}
-                <div id="context" style="color:rgb(5, 184, 255);">{{ context1 }}</div>
+                <div class="heading">{{ context1 }}</div>
             {% endif %}
             {{ form.as_p }}
             <input type="hidden" value="{{ user.username }}" name="user">
@@ -53,7 +54,7 @@
     
     
     {% elif not user.is_authenticated %}
-    <b>Sign in To place Bids!</b>
+    <b class="heading">Sign in To place Bids!</b>
     {% endif %}
 
     <div class="card comment">
@@ -63,7 +64,7 @@
           <p class="card-text comment-text"> 
             {% for comment in comments %}
                 <ul>
-                    <li><div style="font-size: 20px;">{{ comment.text }} - Comment by <label class="heading">{{ comment.user.username }}</label></div></li>
+                    <li><div style="font-size: 20px;">{{ comment.text }} - Comment by <label class="heading" style="font-size: 20px;">{{ comment.user.username }}</label></div></li>
                 </ul>
             {% endfor %}
           </p>
@@ -77,10 +78,10 @@
           {% endif %}
         </div>
       </div>
-      <h1>Details</h1>
+      <p><h1>Details</h1></p>
         <ul>
-            <li style="font-size: 20px;">Listed by: <b class="heading">{{ auction.user }} </b></li>
-            <li style="font-size: 20px;">Category: <b class="heading">{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
+            <li style="font-size: 20px;">Listed by: <b class="heading" style="font-size: 20px;">{{ auction.user }} </b></li>
+            <li style="font-size: 20px;">Category: <b class="heading" style="font-size: 20px;">{% if category %} {{ category.Category }} {% else %} No Category Listed {% endif %}</b></li>
         </ul>
       {% if user.is_authenticated and user == auction.user %}
       <form action="{% url 'close' auction.id %}" method="post">

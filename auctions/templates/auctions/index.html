@@ -2,9 +2,9 @@
 
 {% block body %}
     {% if title %}
-        <p><h2><b>{{ title }}</b></h2></p>
+        <p><h2><b class="heading" style="font-size: 40px;">{{ title }}</b></h2></p>
     {% else %}
-        <p><h2 class="heading"><b>Active Listings</b></h2></p>
+        <p><h2 class="heading" style="font-size: 40px;"><b>Active Listings</b></h2></p>
     {% endif %}
     {% if auctions %}
     <div class="row">
@@ -16,7 +16,7 @@
                 <img src="{{ auction.image.url }}" class="card-img-top" alt="{{ auction.name }}">
             </a>
             {% else %}
-                <span>No Image Listed!</span>
+                <span class="heading" style="font-size: 30px;">No Image Listed!</span>
             </a>
             {% endif %}
             <div class="card-body">
