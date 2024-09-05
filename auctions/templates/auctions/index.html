@@ -1,27 +1,35 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <style>
-        #image
-        {
-            max-width: 250px;
-            max-height: 250px;
-        }
-        
-    </style>
-    <h2>Active Listings</h2>
+    {% if title %}
+        <p><h2><b>{{ title }}</b></h2></p>
+    {% else %}
+        <p><h2><b>Active Listings</b></h2></p>
+    {% endif %}
     {% if auctions %}
+    <div class="row">
         {% for auction in auctions %}
-        <div><strong>{{ auction.name }}</strong></div>
-        </div><strong>Price:{{ auction.price }}$</strong></div>
-        {% if auction.image %}
-        <p><a href="{% url 'listing' auction.id %}"><img src="{{ auction.image.url }}" alt="Auction Image" id="image"></a></p>
-        {% else %}
-            <p><a href="{% url 'listing' auction.id %}">No Image Listed !</a></p>
-        {% endif %}
-        <div>Created {{ auction.time }}</div>
-        {% endfor %}
-
+        <div class="col-md-2">
+        <a href="{% url 'listing' auction.id %}">
+        <div class="card" style="width: 18rem;">
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" class="card-img-top" alt="{{ auction.name }}">
+            </a>
+            {% else %}
+                <span>No Image Listed!</span>
+            </a>
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">Title: {{ auction.name }}</h5>
+              <p class="card-text">{{ auction.description }}</p>
+              <p class="card-text">Created {{ auction.time }}</p>
+            </div>
+          
+        </div>
+    </div>
+          {% endfor %}
+    {% elif title and not auctions %}
+        Your Watchlist is Empty!
     {% else %}
         <h3>No listings!</h3>
 

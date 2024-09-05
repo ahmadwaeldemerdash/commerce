@@ -173,8 +173,14 @@ def watchlist(request):
         l = Listing.objects.get(pk=listing_id)
         watchlist = Watchlist(listing=l)
         watchlist.save()
-        url = reverse("watchlist")
-        return HttpResponseRedirect(url)
+        db_watchlists = Watchlist.objects.all()
+        watchlist = []
+        for w in db_watchlists:
+            watchlist.append(w.listing)
+        return render(request, "auctions/index.html", {
+            "auctions" : watchlist,
+            "title" : "Watchlist"
+        })
     listings = Listing.objects.all()
     auctions = []
     for listing in listings:
@@ -186,8 +192,9 @@ def watchlist(request):
             listing = Listing.objects.get(pk=watchlist)
             auctions.append(listing)
 
-    return render(request, "auctions/watchlist.html",{
-        "auctions" : auctions
+    return render(request, "auctions/index.html",{
+        "auctions" : auctions,
+        "title" : "Watchlist",
     })
 
 
