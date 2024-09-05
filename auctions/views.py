@@ -170,21 +170,28 @@ def auction_listing(request, listing_id):
 def watchlist(request):
     if request.method == "POST":
         listing_id = request.POST.get("watchlist")
+        user = request.POST.get("user")
+        user = User.objects.get(username=user)
         l = Listing.objects.get(pk=listing_id)
-        watchlist = Watchlist(listing=l)
+        watchlist = Watchlist(listing=l, user=user)
         watchlist.save()
-        db_watchlists = Watchlist.objects.all()
+        db_watchlists = Watchlist.objects.get(user=user)
         watchlist = []
-        for w in db_watchlists:
-            watchlist.append(w.listing)
+        try:
+            for w in db_watchlists:
+                watchlist.append(w.listing)
+        except:
+            watchlist.append(db_watchlists.listing)
         return render(request, "auctions/index.html", {
             "auctions" : watchlist,
             "title" : "Watchlist"
         })
     listings = Listing.objects.all()
     auctions = []
+    print(request.user.username)
+    user = User.objects.get(username=request.user.username)
     for listing in listings:
-        watchlist = listing.watchlist.all()
+        watchlist = listing.watchlist.all().filter(user=user)
         watchlist = watchlist.values()
         if watchlist:
             for _ in watchlist:
@@ -248,5 +255,7 @@ def close(request, listing_id):
         user = b.user
         winner = Winner(user=user, listing=listing)
         winner.save()
+        watchlist = Watchlist.objects.get(listing=listing)
+        watchlist.delete()
         url = reverse("listing", args=[listing_id])
         return HttpResponseRedirect(url)

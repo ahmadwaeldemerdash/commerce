@@ -15,11 +15,13 @@
             <form action="{% url 'watchlist' %}" method="post">
                 {% csrf_token %}
                 <p><button type="submit" value="{{ auction.id }}" class="btn btn-primary buttons" name="watchlist">Watchlist</button></p>
+                <input type="hidden" value="{{ user.username }}" name="user">
             </form>
         {% elif token == 1 %}
             <form action="{% url 'remove' %}" method="post">
                 {% csrf_token %}
             <p><button type="submit" value="{{ auction.id }}" class="btn btn-primary buttons" name="remove">Remove</button></p>
+            
         {% endif %}
     {% endif %}
     </form>
