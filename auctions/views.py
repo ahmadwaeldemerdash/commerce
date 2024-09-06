@@ -81,9 +81,9 @@ def create(request):
                 category = Category.objects.get(pk=category)
             except:
                 category = None
-            bid = form.cleaned_data["bid"]
+            price = form.cleaned_data["price"]
             img = form.cleaned_data["image"]
-            user_listing = Listing(user=User.objects.get(username=user), name=title, description=description,price=bid, category=category, image=img)
+            user_listing = Listing(user=User.objects.get(username=user), name=title, description=description,price=price, category=category, image=img)
             user_listing.save()
             url = reverse("index")
             return HttpResponseRedirect(url)
