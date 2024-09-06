@@ -7,8 +7,10 @@ class User(AbstractUser):
 
 class Category(models.Model):
     Category = models.CharField(blank=True, null=True,max_length=100)
+   
 
 class Listing(models.Model):
+    active = models.BooleanField(blank=True, null=True, default=True) 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="listing")
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=5000)

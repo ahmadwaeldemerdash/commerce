@@ -39,7 +39,7 @@
     </div>
   
     {% if user.username|lower == auction.user|lower %}
-
+        <lable style="font-size: 30px;font-weight: bold;">{% if bids != 0 %} {{ bids }} <span class="heading" style="font-size: 30px;">bid(s)</span> so far. {% else %} No <span class="heading" style="font-size: 30px;">bids</span> so far. {% endif %}
     {% elif not winner and user.is_authenticated and user.username|lower != auction.user|lower %}
         <div style="font-size: 30px; font-weight: bold;">{% if bids != 0 %}{{ bids }} bid(s) so far.Your bid is the current <span class="heading">bid!</span>{% else %} No bids so far.Your bid is the current <span class="heading" style="font-size: 30px;">bid!</span>{% endif %}</div>
         <form action="/listing/{{ auction.id }}/" method="post">
@@ -54,12 +54,11 @@
             <p><input type="submit" value="Place Bid" class="btn btn-primary buttons"></p>
         </form>
     
-    
     {% elif not user.is_authenticated %}
     <b class="heading">Sign in To place Bids!</b>
     {% endif %}
 
-    <div class="card comment">
+    <p><div class="card comment">
         <h5 class="card-header comment-header">Comments</h5>
         <div class="card-body comment-body">
           
@@ -70,6 +69,7 @@
                 </ul>
             {% endfor %}
           </p>
+        </p>
           {% if user.is_authenticated %}
             <form action="{% url 'comment' auction.id %}" method="post">
                 {% csrf_token %}

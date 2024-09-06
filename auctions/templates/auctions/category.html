@@ -3,6 +3,7 @@
 {% block body %}
     <h1 class="heading" style="font-size: 40px;">Categories</h1>
     {% for category in categories %}
+
         <p>
         <ul>
             <li><h4><a href="{% url 'listing_category' category.id  %}" class="create_link">{{ category.Category }}</h4></li>

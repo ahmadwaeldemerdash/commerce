@@ -118,12 +118,14 @@ def auction_listing(request, listing_id):
         price = Listing.objects.values("price").filter(id=listing_id)
         db_bid = float(price[0]["price"])
     form.fields['user_bid'].widget.attrs.update({'min': db_bid})
-    token = 1 
     listing = Listing.objects.get(pk=listing_id)
     comments = Comment.objects.all().filter(listing=listing)
     category = listing.category
-    if len(listing.watchlist.all()) == 0:
+    user = User.objects.get(username=request.user.username)
+    if len(listing.watchlist.all().filter(user=user)) == 0:
         token = 0
+    elif len(listing.watchlist.all().filter(user=user)) != 0:
+        token = 1
     if request.method == "POST":
         form = bid_form(request.POST)
         user_bid = float(request.POST.get("user_bid"))
@@ -188,7 +190,6 @@ def watchlist(request):
         })
     listings = Listing.objects.all()
     auctions = []
-    print(request.user.username)
     user = User.objects.get(username=request.user.username)
     for listing in listings:
         watchlist = listing.watchlist.all().filter(user=user)
@@ -234,7 +235,7 @@ def categories(request):
 
 def listing_category(request, category_id):
     category = Category.objects.get(pk=category_id)
-    listings = Listing.objects.all().filter(category=category)
+    listings = Listing.objects.all().filter(category=category, active=True)
     return render(request, "auctions/index.html", {
         "auctions" : listings
     })
@@ -242,6 +243,8 @@ def listing_category(request, category_id):
 def close(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
+        listing.active = False
+        listing.save()
         bids = listing.bids.all()
         sum = 0
         for bid in bids:
@@ -250,12 +253,18 @@ def close(request, listing_id):
         try:
             b = Bid.objects.get(price=sum)
         except:
-           url = reverse("listing", args=[listing_id])
+           listing.delete()
+           url = reverse("index")
            return HttpResponseRedirect(url)
+           #url = reverse("listing", args=[listing_id])
+           #return HttpResponseRedirect(url)
         user = b.user
         winner = Winner(user=user, listing=listing)
         winner.save()
-        watchlist = Watchlist.objects.get(listing=listing)
-        watchlist.delete()
+        try:
+            watchlist = Watchlist.objects.get(listing=listing)
+            watchlist.delete()
+        except:
+            watchlist = None
         url = reverse("listing", args=[listing_id])
         return HttpResponseRedirect(url)
